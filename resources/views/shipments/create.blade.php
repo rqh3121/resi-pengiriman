@@ -45,6 +45,11 @@
                             @error('receiver_city')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="mb-3">
+                            <label for="package_count" class="form-label">Jumlah Package (Paket) <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control @error('package_count') is-invalid @enderror" id="package_count" name="package_count" value="{{ old('package_count', 1) }}" min="1" required>
+                            @error('package_count')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        </div>
+                        <div class="mb-3">
                             <label class="form-label fw-semibold">Kontak <span class="text-danger">*</span></label>
                             <input type="text" class="form-control @error('receiver_contact') is-invalid @enderror" name="receiver_contact" value="{{ old('receiver_contact') }}" placeholder="No. Telepon / HP" required>
                             @error('receiver_contact')<div class="invalid-feedback">{{ $message }}</div>@enderror

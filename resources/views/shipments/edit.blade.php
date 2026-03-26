@@ -42,6 +42,10 @@
                             <input type="text" class="form-control" name="receiver_city" value="{{ old('receiver_city', $shipment->receiver_city) }}" required>
                         </div>
                         <div class="mb-3">
+                            <label for="package_count" class="form-label">Jumlah Package (Paket)</label>
+                            <input type="number" class="form-control" id="package_count" name="package_count" value="{{ old('package_count', $shipment->package_count) }}" min="1" required>
+                        </div>
+                        <div class="mb-3">
                             <label class="form-label fw-semibold">Kontak</label>
                             <input type="text" class="form-control" name="receiver_contact" value="{{ old('receiver_contact', $shipment->receiver_contact) }}" required>
                         </div>
