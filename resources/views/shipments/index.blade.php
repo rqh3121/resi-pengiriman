@@ -39,25 +39,21 @@
                     @foreach ($shipments as $index => $s)
                     <tr>
                         <td class="fw-bold">{{ $index + 1 }}</td>
-                        <td>
-                            <strong>{{ $s->sender_name }}</strong><br>
-                            <small class="text-muted">{{ $s->sender_contact }}</small>
-                        </td>
-                        <td>
-                            <strong>{{ $s->receiver_name }}</strong><br>
-                            <small class="text-muted">{{ $s->receiver_contact }}</small>
-                        </td>
+                        <td><strong>{{ $s->sender_name }}</strong><br><small class="text-muted">{{ $s->sender_contact }}</small></td>
+                        <td><strong>{{ $s->receiver_name }}</strong><br><small class="text-muted">{{ $s->receiver_contact }}</small></td>
                         <td>{{ $s->receiver_city }}</td>
-                        <td class="text-center">
-                            <span class="badge bg-info rounded-pill px-3 py-2">{{ $s->package_count }}</span>
-                        </td>
+                        <td class="text-center"><span class="badge bg-info rounded-pill px-3 py-2">{{ $s->package_count }}</span></td>
                         <td>{{ $s->created_at->format('d/m/Y H:i') }}</td>
                         <td class="text-center">
                             @php $hasResi = !empty($s->resi_number) && !empty($s->expedition); @endphp
                             <button class="btn btn-sm {{ $hasResi ? 'btn-success' : 'btn-danger' }} rounded-pill px-3" 
                                 data-bs-toggle="modal" data-bs-target="#resiModal"
-                                data-id="{{ $s->id }}" data-resi="{{ $s->resi_number }}"
-                                data-expedition="{{ $s->expedition }}" data-photo="{{ $s->resi_photo }}">
+                                data-id="{{ $s->id }}" 
+                                data-resi="{{ $s->resi_number }}"
+                                data-expedition="{{ $s->expedition }}" 
+                                data-photo="{{ $s->resi_photo }}"
+                                data-weight="{{ $s->weight }}"
+                                data-cost="{{ $s->shipping_cost }}">
                                 <i class="fas fa-truck"></i> {{ $hasResi ? 'Update Resi' : 'Isi Resi' }}
                             </button>
                         </td>
@@ -84,7 +80,7 @@
     </div>
 @endif
 
-<!-- Modal Resi (sama seperti sebelumnya) -->
+<!-- Modal Resi -->
 <div class="modal fade" id="resiModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content rounded-4 border-0 shadow-lg">
@@ -100,14 +96,35 @@
                     <div class="mb-3"><label>Ekspedisi</label>
                         <select name="expedition" id="expedition" class="form-select">
                             <option value="">Pilih</option>
-                            <option value="JNE">JNE</option><option value="Pos Indonesia">Pos Indonesia</option><option value="J&T">J&T</option>
-                            <option value="SiCepat">SiCepat</option><option value="AnterAja">AnterAja</option><option value="TIKI">TIKI</option>
-                            <option value="Wahana">Wahana</option><option value="Lion Parcel">Lion Parcel</option><option value="SAPX">SAPX</option>
-                            <option value="SPX">SPX</option><option value="GoSend">GoSend</option><option value="GrabExpress">GrabExpress</option>
-                            <option value="Ninja Xpress">Ninja Xpress</option><option value="ID Express">ID Express</option><option value="DHL">DHL</option>
-                            <option value="FedEx">FedEx</option><option value="Didi Express">Didi Express</option><option value="RajaKirim">RajaKirim</option>
-                            <option value="Sentral Cargo">Sentral Cargo</option><option value="Lalamove">Lalamove</option>
+                            <option value="JNE">JNE</option>
+                            <option value="Pos Indonesia">Pos Indonesia</option>
+                            <option value="J&T">J&T</option>
+                            <option value="SiCepat">SiCepat</option>
+                            <option value="AnterAja">AnterAja</option>
+                            <option value="TIKI">TIKI</option>
+                            <option value="Wahana">Wahana</option>
+                            <option value="Lion Parcel">Lion Parcel</option>
+                            <option value="SAPX">SAPX</option>
+                            <option value="SPX">SPX</option>
+                            <option value="GoSend">GoSend</option>
+                            <option value="GrabExpress">GrabExpress</option>
+                            <option value="Ninja Xpress">Ninja Xpress</option>
+                            <option value="ID Express">ID Express</option>
+                            <option value="DHL">DHL</option>
+                            <option value="FedEx">FedEx</option>
+                            <option value="Didi Express">Didi Express</option>
+                            <option value="RajaKirim">RajaKirim</option>
+                            <option value="Sentral Cargo">Sentral Cargo</option>
+                            <option value="Lalamove">Lalamove</option>
                         </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="weight" class="form-label">Berat (kg)</label>
+                        <input type="number" step="0.01" class="form-control" id="weight" name="weight">
+                    </div>
+                    <div class="mb-3">
+                        <label for="shipping_cost" class="form-label">Biaya Pengiriman (Rp)</label>
+                        <input type="number" step="1000" class="form-control" id="shipping_cost" name="shipping_cost">
                     </div>
                     <div class="mb-3"><label>Foto Resi</label><input type="file" name="resi_photo" class="form-control" accept="image/*"></div>
                     <div id="currentPhoto" class="d-none"><a href="#" target="_blank" id="photoLink">Lihat foto</a></div>
@@ -123,16 +140,20 @@
 <script>
     $('#resiModal').on('show.bs.modal', function(e) {
         let btn = $(e.relatedTarget);
-        $('#shipment_id').val(btn.data('id'));
-        $('#resi_number').val(btn.data('resi'));
-        $('#expedition').val(btn.data('expedition'));
+        let modal = $(this);
+        modal.find('#shipment_id').val(btn.data('id'));
+        modal.find('#resi_number').val(btn.data('resi'));
+        modal.find('#expedition').val(btn.data('expedition'));
+        modal.find('#weight').val(btn.data('weight'));
+        modal.find('#shipping_cost').val(btn.data('cost'));
         let photo = btn.data('photo');
         if (photo) {
-            $('#currentPhoto').removeClass('d-none').find('#photoLink').attr('href', '/storage/' + photo);
+            modal.find('#currentPhoto').removeClass('d-none').find('#photoLink').attr('href', '/storage/' + photo);
         } else {
-            $('#currentPhoto').addClass('d-none');
+            modal.find('#currentPhoto').addClass('d-none');
         }
     });
+
     $('#resiForm').on('submit', function(e) {
         e.preventDefault();
         let fd = new FormData(this);

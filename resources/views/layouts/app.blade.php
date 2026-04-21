@@ -48,6 +48,31 @@
         .btn-modern { border-radius:40px; padding:8px 24px; font-weight:500; transition:0.2s; }
         .btn-modern:hover { transform:translateY(-2px); }
         footer { text-align:center; margin-top:40px; padding-top:20px; border-top:1px solid #cbd5e1; color:#475569; font-size:0.85rem; }
+        /* Style untuk quick stats */
+        .sidebar-stats .stat-card {
+            background: rgba(255,255,255,0.2);
+            transition: all 0.2s;
+            border-radius: 12px;
+            padding: 8px 12px;
+        }
+        .sidebar-stats .stat-card:hover {
+            background: rgba(255,255,255,0.35);
+            transform: translateX(3px);
+        }
+        .sidebar-stats .stat-label {
+            font-size: 0.7rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #0c4a6e;
+            opacity: 0.8;
+        }
+        .sidebar-stats .stat-number {
+            font-size: 1.6rem;
+            font-weight: 700;
+            line-height: 1.2;
+            color: #0369a1;
+        }
     </style>
 </head>
 <body>
@@ -56,10 +81,28 @@
         <div class="sidebar-logo">
             <img src="{{ asset('images/logo.png') }}" alt="Logo Perusahaan">
         </div>
+        
+        <!-- Quick Stats Section -->
+        <div class="sidebar-stats px-3 mb-4">
+            <div class="stat-card mb-2">
+                <div class="stat-label">Pengiriman Hari Ini</div>
+                <div class="stat-number">{{ $sidebarStats['today_shipments'] ?? 0 }}</div>
+            </div>
+            <div class="stat-card mb-2">
+                <div class="stat-label">Resi Belum Diisi</div>
+                <div class="stat-number">{{ $sidebarStats['pending_resi'] ?? 0 }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Paket Terkirim</div>
+                <div class="stat-number">{{ $sidebarStats['total_packages'] ?? 0 }}</div>
+            </div>
+        </div>
+        
         <ul class="nav flex-column">
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('shipments.*') ? 'active' : '' }}" href="{{ route('shipments.index') }}"><i class="fas fa-list-alt"></i> Daftar Pengiriman</a></li>
-            <li class="nav-item"><a class="nav-link {{ request()->routeIs('laporan') ? 'active' : '' }}" href="{{ route('laporan') }}"><i class="fas fa-chart-line"></i> Laporan</a></li>
+            <li class="nav-item"><a class="nav-link {{ request()->routeIs('reports.cost') ? 'active' : '' }}" href="{{ route('reports.cost') }}"><i class="fas fa-chart-pie"></i> Laporan Biaya</a></li>
+            <li class="nav-item"><a class="nav-link {{ request()->routeIs('laporan') ? 'active' : '' }}" href="{{ route('laporan') }}"><i class="fas fa-chart-line"></i> Data Pengiriman per Bulan</a></li>
             <li class="nav-item mt-4"><hr style="border-color:rgba(12,74,110,0.1);"></li>
             <li class="nav-item">
                 <form method="POST" action="{{ route('logout') }}">

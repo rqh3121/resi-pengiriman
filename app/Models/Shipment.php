@@ -22,5 +22,7 @@ class Shipment extends Model
         'expedition',
         'resi_photo',
         'item_description',
+        'weight',
+        'shipping_cost',
     ];
 }

@@ -121,12 +121,11 @@ class ShipmentController extends Controller
             'resi_number' => 'nullable|string|max:255',
             'expedition'  => 'nullable|string|max:100',
             'resi_photo'  => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'weight'      => 'nullable|numeric|min:0',
+            'shipping_cost'=> 'nullable|numeric|min:0',
         ]);
 
-        $data = [
-            'resi_number' => $request->resi_number,
-            'expedition'  => $request->expedition,
-        ];
+        $data = $request->only(['resi_number', 'expedition', 'weight', 'shipping_cost']);
 
         if ($request->hasFile('resi_photo')) {
             if ($shipment->resi_photo && Storage::disk('public')->exists($shipment->resi_photo)) {
@@ -137,7 +136,18 @@ class ShipmentController extends Controller
         }
 
         $shipment->update($data);
+
         return response()->json(['success' => true]);
+    }
+    public function getSidebarStats()
+    {
+        $today = now()->toDateString();
+        return [
+            'today_shipments' => Shipment::whereDate('created_at', $today)->count(),
+            'pending_resi'    => Shipment::whereNull('resi_number')->orWhereNull('expedition')->count(),
+            'total_packages'  => Shipment::sum('package_count'),
+            'active_projects' => Shipment::distinct('project_name')->count('project_name'), // jika ada kolom project_name
+        ];
     }
 
 }

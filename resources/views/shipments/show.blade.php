@@ -6,6 +6,7 @@
         <h2 class="fw-bold">Detail Pengiriman #{{ $shipment->id }}</h2>
         <a href="{{ route('shipments.index') }}" class="btn btn-secondary btn-modern"><i class="fas fa-arrow-left"></i> Kembali</a>
     </div>
+
     <div class="row g-4">
         <div class="col-md-6">
             <div class="bg-light p-4 rounded-4 h-100">
@@ -21,7 +22,7 @@
         </div>
     </div>
 
-    <!-- Jumlah Paket -->
+    <!-- Jumlah Paket & Keterangan Barang -->
     <div class="row mt-4">
         <div class="col-md-6">
             <div class="bg-light p-4 rounded-4">
@@ -39,26 +40,47 @@
         @endif
     </div>
 
-    <!-- Informasi Resi jika ada -->
-    @if(!empty($shipment->resi_number) || !empty($shipment->expedition) || !empty($shipment->resi_photo))
-    <div class="row mt-4">
-        <div class="col-12">
-            <h5><i class="fas fa-truck"></i> Informasi Resi</h5>
-            <hr>
-        </div>
-        <div class="col-md-4">
-            <strong>Nomor Resi:</strong> {{ $shipment->resi_number ?? '-' }}
-        </div>
-        <div class="col-md-4">
-            <strong>Ekspedisi:</strong> {{ $shipment->expedition ?? '-' }}
-        </div>
-        <div class="col-md-4">
-            <strong>Foto Resi:</strong>
-            @if($shipment->resi_photo)
-                <a href="{{ asset('storage/' . $shipment->resi_photo) }}" target="_blank">Lihat Foto</a>
-            @else
-                -
-            @endif
+    <!-- ========== INFORMASI RESI YANG DIPERAPIKAN ========== -->
+    @if(!empty($shipment->resi_number) || !empty($shipment->expedition) || !empty($shipment->resi_photo) || !empty($shipment->weight) || !empty($shipment->shipping_cost))
+    <div class="mt-4">
+        <div class="bg-white rounded-4 shadow-sm p-4">
+            <h5 class="mb-3"><i class="fas fa-truck text-primary"></i> Informasi Resi</h5>
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <div class="border rounded-3 p-3 h-100 bg-light">
+                        <div class="text-muted small mb-1"><i class="fas fa-barcode"></i> Nomor Resi</div>
+                        <div class="fw-bold">{{ $shipment->resi_number ?? '-' }}</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="border rounded-3 p-3 h-100 bg-light">
+                        <div class="text-muted small mb-1"><i class="fas fa-truck-moving"></i> Ekspedisi</div>
+                        <div class="fw-bold">{{ $shipment->expedition ?? '-' }}</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="border rounded-3 p-3 h-100 bg-light">
+                        <div class="text-muted small mb-1"><i class="fas fa-weight-hanging"></i> Berat</div>
+                        <div class="fw-bold">{{ $shipment->weight ? number_format($shipment->weight, 2).' kg' : '-' }}</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="border rounded-3 p-3 h-100 bg-light">
+                        <div class="text-muted small mb-1"><i class="fas fa-money-bill-wave"></i> Biaya Kirim</div>
+                        <div class="fw-bold">{{ $shipment->shipping_cost ? 'Rp '.number_format($shipment->shipping_cost, 0, ',', '.') : '-' }}</div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="border rounded-3 p-3 bg-light">
+                        <div class="text-muted small mb-1"><i class="fas fa-camera"></i> Foto Resi</div>
+                        @if($shipment->resi_photo)
+                            <a href="{{ asset('storage/' . $shipment->resi_photo) }}" target="_blank" class="btn btn-sm btn-outline-primary">Lihat Foto</a>
+                        @else
+                            <span class="text-muted">-</span>
+                        @endif
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     @endif
