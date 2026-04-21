@@ -18,8 +18,9 @@ class Shipment extends Model
         'receiver_address',
         'receiver_city',
         'package_count',
-        'resi_number',      // tambah
-        'expedition',       // tambah
-        'resi_photo',       // tambah
+        'resi_number',
+        'expedition',
+        'resi_photo',
+        'item_description',
     ];
 }
