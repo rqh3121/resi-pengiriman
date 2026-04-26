@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Shipping Label - @yield('title', 'Dashboard')</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
@@ -11,7 +11,6 @@
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         body { font-family: 'Inter', sans-serif; background:#f1f5f9; color:#0f172a; }
-        /* Sidebar biru langit cerah */
         .sidebar {
             position: fixed; top:0; left:0; height:100%; width:280px;
             background: linear-gradient(145deg, #f0f9ff 0%, #bae6fd 100%);
@@ -35,7 +34,23 @@
         .sidebar::-webkit-scrollbar-track { background:#e0f2fe; }
         .sidebar::-webkit-scrollbar-thumb { background:#7dd3fc; border-radius:10px; }
         .content { margin-left:280px; padding:24px 32px; min-height:100vh; transition:margin-left 0.3s; }
-        .sidebar-toggle { display:none; position:fixed; top:20px; left:20px; z-index:1060; background:#0284c7; border:none; color:white; width:44px; height:44px; border-radius:12px; font-size:1.3rem; box-shadow:0 4px 10px rgba(0,0,0,0.1); transition:0.2s; }
+        .sidebar-toggle {
+            display: none;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1060;
+            background: #0284c7;
+            border: none;
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            font-size: 1.4rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            transition: 0.2s;
+            cursor: pointer;
+        }
         .sidebar-toggle:hover { background:#0369a1; transform:scale(1.02); }
         @media (max-width:768px) {
             .sidebar { margin-left:-280px; }
@@ -48,7 +63,6 @@
         .btn-modern { border-radius:40px; padding:8px 24px; font-weight:500; transition:0.2s; }
         .btn-modern:hover { transform:translateY(-2px); }
         footer { text-align:center; margin-top:40px; padding-top:20px; border-top:1px solid #cbd5e1; color:#475569; font-size:0.85rem; }
-        /* Style untuk quick stats */
         .sidebar-stats .stat-card {
             background: rgba(255,255,255,0.2);
             transition: all 0.2s;
@@ -73,6 +87,14 @@
             line-height: 1.2;
             color: #0369a1;
         }
+        @media (max-width: 768px) {
+            .content { padding: 16px !important; }
+            .card-modern { border-radius: 16px !important; }
+            .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            .table { min-width: 600px; }
+            h1.display-5 { font-size: 1.8rem; }
+            .btn-group { flex-wrap: wrap; gap: 4px; }
+        }
     </style>
 </head>
 <body>
@@ -81,8 +103,8 @@
         <div class="sidebar-logo">
             <img src="{{ asset('images/logo.png') }}" alt="Logo Perusahaan">
         </div>
-        
-        <!-- Quick Stats Section -->
+
+        <!-- Quick Stats -->
         <div class="sidebar-stats px-3 mb-4">
             <div class="stat-card mb-2">
                 <div class="stat-label">Pengiriman Hari Ini</div>
@@ -97,7 +119,14 @@
                 <div class="stat-number">{{ $sidebarStats['total_packages'] ?? 0 }}</div>
             </div>
         </div>
-        
+
+        <!-- TOMBOL TAMBAH PENGIRIMAN DI SIDEBAR -->
+        <div class="px-3 mb-3">
+            <a href="{{ route('shipments.create') }}" class="btn btn-success w-100 rounded-pill">
+                <i class="fas fa-plus-circle me-2"></i> Tambah Pengiriman
+            </a>
+        </div>
+
         <ul class="nav flex-column">
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('shipments.*') ? 'active' : '' }}" href="{{ route('shipments.index') }}"><i class="fas fa-list-alt"></i> Daftar Pengiriman</a></li>
@@ -125,16 +154,21 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        const toggleBtn = document.getElementById('sidebarToggleBtn');
-        const sidebar = document.getElementById('sidebar');
-        if(toggleBtn && sidebar){
-            toggleBtn.addEventListener('click', () => sidebar.classList.toggle('show'));
-            document.addEventListener('click', function(event){
-                if(window.innerWidth <= 768 && sidebar.classList.contains('show') && !sidebar.contains(event.target) && event.target !== toggleBtn && !toggleBtn.contains(event.target)){
-                    sidebar.classList.remove('show');
-                }
-            });
-        }
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleBtn = document.getElementById('sidebarToggleBtn');
+            const sidebar = document.getElementById('sidebar');
+            if(toggleBtn && sidebar) {
+                toggleBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    sidebar.classList.toggle('show');
+                });
+                document.addEventListener('click', function(event) {
+                    if(window.innerWidth <= 768 && sidebar.classList.contains('show') && !sidebar.contains(event.target) && event.target !== toggleBtn && !toggleBtn.contains(event.target)) {
+                        sidebar.classList.remove('show');
+                    }
+                });
+            }
+        });
     </script>
     @stack('scripts')
 </body>

@@ -3,9 +3,11 @@
 @section('title', 'Daftar Pengiriman')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+<div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="display-5 fw-bold">Daftar Pengiriman</h1>
-    <a href="{{ route('shipments.create') }}" class="btn btn-primary btn-modern"><i class="fas fa-plus-circle me-2"></i> Tambah Baru</a>
+    <a href="{{ route('shipments.create') }}" class="btn btn-primary btn-modern">
+        <i class="fas fa-plus-circle me-2"></i> Tambah Baru
+    </a>
 </div>
 
 <!-- Search -->
@@ -80,7 +82,7 @@
     </div>
 @endif
 
-<!-- Modal Resi -->
+<!-- Modal Resi (sama seperti sebelumnya) -->
 <div class="modal fade" id="resiModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content rounded-4 border-0 shadow-lg">
