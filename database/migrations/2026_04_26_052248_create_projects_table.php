@@ -8,17 +8,18 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('cities', function (Blueprint $table) {
+        Schema::create('projects', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('province')->nullable();
-            $table->string('postal_code')->nullable();
+            $table->string('judul_proyek');
+            $table->string('spk')->nullable();
+            $table->string('spmk')->nullable();
+            $table->string('bakn')->nullable();
             $table->timestamps();
         });
     }
 
     public function down()
     {
-        Schema::dropIfExists('cities');
+        Schema::dropIfExists('projects');
     }
 };

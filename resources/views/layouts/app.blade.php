@@ -120,7 +120,7 @@
             </div>
         </div>
 
-        <!-- TOMBOL TAMBAH PENGIRIMAN DI SIDEBAR -->
+        <!-- Tombol Tambah Pengiriman di Sidebar -->
         <div class="px-3 mb-3">
             <a href="{{ route('shipments.create') }}" class="btn btn-success w-100 rounded-pill">
                 <i class="fas fa-plus-circle me-2"></i> Tambah Pengiriman
@@ -130,6 +130,7 @@
         <ul class="nav flex-column">
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('shipments.*') ? 'active' : '' }}" href="{{ route('shipments.index') }}"><i class="fas fa-list-alt"></i> Daftar Pengiriman</a></li>
+            <li class="nav-item"><a class="nav-link {{ request()->routeIs('projects.*') ? 'active' : '' }}" href="{{ route('projects.index') }}"><i class="fas fa-folder-open"></i> Proyek</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('reports.cost') ? 'active' : '' }}" href="{{ route('reports.cost') }}"><i class="fas fa-chart-pie"></i> Laporan Biaya</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('laporan') ? 'active' : '' }}" href="{{ route('laporan') }}"><i class="fas fa-chart-line"></i> Data Pengiriman per Bulan</a></li>
             <li class="nav-item mt-4"><hr style="border-color:rgba(12,74,110,0.1);"></li>

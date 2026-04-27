@@ -24,5 +24,10 @@ class Shipment extends Model
         'item_description',
         'weight',
         'shipping_cost',
+        'project_id',
     ];
+    public function project()
+    {
+        return $this->belongsTo(Project::class);
+    }
 }

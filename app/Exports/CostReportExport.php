@@ -9,30 +9,36 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 
 class CostReportExport implements FromCollection, WithHeadings, WithMapping
 {
-    protected $month;
-    protected $year;
+    protected $project_id;
+    protected $bulan;
 
-    public function __construct($month, $year)
+    public function __construct($project_id = null, $bulan = 'all')
     {
-        $this->month = $month;
-        $this->year = $year;
+        $this->project_id = $project_id;
+        $this->bulan = $bulan;
     }
 
     public function collection()
     {
-        return Shipment::select(
+        $query = Shipment::select(
                 'expedition',
                 \DB::raw('COUNT(*) as total_shipments'),
                 \DB::raw('SUM(weight) as total_weight'),
                 \DB::raw('SUM(shipping_cost) as total_cost'),
                 \DB::raw('AVG(shipping_cost) as avg_cost')
             )
-            ->whereMonth('created_at', $this->month)
-            ->whereYear('created_at', $this->year)
             ->whereNotNull('shipping_cost')
-            ->whereNotNull('expedition')
-            ->groupBy('expedition')
-            ->get();
+            ->whereNotNull('expedition');
+
+        if ($this->project_id) {
+            $query->where('project_id', $this->project_id);
+        }
+
+        if ($this->bulan !== 'all') {
+            $query->whereMonth('created_at', $this->bulan);
+        }
+
+        return $query->groupBy('expedition')->get();
     }
 
     public function headings(): array

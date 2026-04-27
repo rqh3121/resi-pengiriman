@@ -5,193 +5,131 @@
     <title>Laporan Biaya Pengiriman</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
             font-family: 'Helvetica', 'Arial', sans-serif;
             background: white;
             padding: 20px;
-            color: #1e293b;
-        }
-        .container {
-            max-width: 100%;
-            margin: 0 auto;
-        }
-        /* Kop surat */
-        .kop {
-            margin-bottom: 20px;
-            border-bottom: 2px solid #0c4a6e;
-            padding-bottom: 15px;
-        }
-        .kop-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 20px;
-        }
-        .logo-left {
-            flex: 1;
-            text-align: left;
-        }
-        .logo-left img {
-            max-height: 55px;
-            max-width: 180px;
-            width: auto;
-            height: auto;
-            object-fit: contain;
-        }
-        .kop-text {
-            flex: 2;
-            text-align: center;
-        }
-        .logo-right {
-            flex: 1;
-            text-align: right;
-        }
-        .logo-right img {
-            max-height: 55px;
-            max-width: 180px;
-            width: auto;
-            height: auto;
-            object-fit: contain;
-        }
-        .judul-laporan {
-            font-size: 18px;
-            font-weight: bold;
-            color: #0c4a6e;
-            margin-bottom: 5px;
-        }
-        .periode {
             font-size: 12px;
-            color: #475569;
-        }
-        /* Tabel ringkasan (horizontal) */
-        .summary-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 25px;
-        }
-        .summary-table td {
-            border: 1px solid #cbd5e1;
-            padding: 10px 12px;
-            text-align: center;
-            background-color: #f8fafc;
-        }
-        .summary-table .label {
-            font-size: 11px;
-            color: #475569;
-            display: block;
-            margin-bottom: 5px;
-        }
-        .summary-table .value {
-            font-size: 18px;
-            font-weight: bold;
-            color: #0f172a;
-        }
-        /* Tabel data utama */
-        table.data-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-        th {
-            background-color: #f1f5f9;
-            border: 1px solid #cbd5e1;
-            padding: 8px 10px;
-            text-align: left;
-            font-size: 11px;
-            font-weight: 600;
             color: #1e293b;
+            line-height: 1.5;
         }
-        td {
-            border: 1px solid #cbd5e1;
-            padding: 6px 10px;
+
+        .container { width: 100%; margin: 0 auto; }
+
+        /* ================= KOP SURAT (CLEAN, TANPA KOTAK) ================= */
+        .kop { margin-bottom: 15px; }
+        .kop-table { width: 100%; border-collapse: collapse; }
+        .kop-table td { vertical-align: middle; border: none; padding: 0 5px; }
+        .judul-laporan { font-size: 18px; font-weight: bold; text-align: center; margin-bottom: 5px; color: #000000; }
+        .periode, .nomor-surat { font-size: 11px; text-align: center; color: #475569; }
+        .garis-bawah { border-bottom: 2px solid #0c4a6e; margin: 12px 0 15px 0; }
+
+        /* ================= KETERANGAN (PARAGRAF DENGAN TAB) ================= */
+        .keterangan {
+            margin: 10px 0 20px 0;
             font-size: 11px;
-            vertical-align: top;
+            text-align: justify;
+            line-height: 1.6;
         }
-        .text-end {
-            text-align: right;
+        .keterangan p {
+            text-indent: 2em; /* indentasi seperti tab di awal paragraf */
+            margin: 0;
         }
-        .text-center {
-            text-align: center;
-        }
-        .footer {
-            margin-top: 25px;
-            text-align: center;
-            font-size: 10px;
-            color: #94a3b8;
-            border-top: 1px solid #e2e8f0;
-            padding-top: 12px;
-        }
-        @media print {
-            body { padding: 0; margin: 0; }
-        }
+
+        /* ================= TABEL RINGKASAN ================= */
+        .summary-table { width: 100%; border-collapse: collapse; margin-bottom: 25px; }
+        .summary-table td { border: 1px solid #cbd5e1; padding: 12px; text-align: center; background: #f8fafc; }
+        .label { font-size: 11px; color: #64748b; margin-bottom: 5px; }
+        .value { font-size: 18px; font-weight: bold; }
+
+        /* ================= TABEL RINCIAN ================= */
+        h4 { margin: 15px 0 10px 0; font-size: 14px; font-weight: bold; }
+        table.data-table { width: 100%; border-collapse: collapse; margin-top: 5px; }
+        th { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 8px; font-size: 11px; font-weight: 600; }
+        td { border: 1px solid #cbd5e1; padding: 7px; font-size: 11px; }
+        .text-end { text-align: right; }
+        .text-center { text-align: center; }
+
+        /* ================= FOOTER ================= */
+        .footer { margin-top: 30px; text-align: center; font-size: 10px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 10px; }
+
+        @media print { body { margin: 0; padding: 0; } }
     </style>
 </head>
 <body>
 <div class="container">
-    <!-- Kop surat dengan dua logo -->
+    <!-- ================= KOP SURAT (CLEAN) ================= -->
     <div class="kop">
-        <div class="kop-row">
-            <div class="logo-left">
-                <img src="{{ public_path('images/danantara.png') }}" alt="Danantara Logo">
-            </div>
-            <div class="kop-text">
-                <div class="judul-laporan">LAPORAN BIAYA PENGIRIMAN</div>
-                <div class="periode">Periode: {{ date('F', mktime(0,0,0,$month,1)) }} {{ $year }}</div>
-            </div>
-            <div class="logo-right">
-                <img src="{{ public_path('images/logo.png') }}" alt="Company Logo">
-            </div>
-        </div>
+        <table class="kop-table">
+            <tr>
+                <td style="width:22%; text-align:left;">
+                    @if(file_exists(public_path('images/danantara.png')))
+                        <img src="{{ public_path('images/danantara.png') }}" style="height:33px; width:auto;">
+                    @endif
+                </td>
+                <td style="width:50%; text-align:center;">
+                    <div class="judul-laporan">LAPORAN BIAYA PENGIRIMAN</div>
+                    <div class="periode">Bulan: {{ $bulan_nama }}</div>
+                    <div class="nomor-surat">NO: {{ $nomor_surat }}</div>
+                </td>
+                <td style="width:28%; text-align:right;">
+                    @if(file_exists(public_path('images/logo.png')))
+                        <img src="{{ public_path('images/logo.png') }}" style="height:45px; width:auto;">
+                    @endif
+                </td>
+            </tr>
+        </table>
+        <div class="garis-bawah"></div>
     </div>
 
-    <!-- Tabel ringkasan (horizontal) -->
+    <!-- ================= KETERANGAN (DENGAN TAB) ================= -->
+    <div class="keterangan">
+        <p>Berdasarkan data pengiriman yang tercatat dalam sistem, berikut adalah rincian biaya pengiriman sesuai filter yang dipilih. Laporan ini mencakup total biaya, total berat, serta rincian per cabang tujuan dan per ekspedisi. Data disajikan untuk keperluan evaluasi dan pengambilan keputusan manajemen.</p>
+    </div>
+
+    <!-- ================= TABEL RINGKASAN ================= -->
     <table class="summary-table">
         <tr>
-            <td>
-                <div class="label">Total Pengiriman</div>
-                <div class="value">{{ number_format($grandTotalShipments) }}</div>
-            </td>
-            <td>
-                <div class="label">Total Biaya</div>
-                <div class="value">Rp {{ number_format($grandTotalCost, 0, ',', '.') }}</div>
-            </td>
-            <td>
-                <div class="label">Total Berat</div>
-                <div class="value">{{ number_format($grandTotalWeight, 2) }} kg</div>
-            </td>
+            <td><div class="label">Total Pengiriman</div><div class="value">{{ number_format($grandTotalShipments) }}</div></td>
+            <td><div class="label">Total Biaya</div><div class="value">Rp {{ number_format($grandTotalCost, 0, ',', '.') }}</div></td>
+            <td><div class="label">Total Berat</div><div class="value">{{ number_format($grandTotalWeight, 2) }} kg</div></td>
         </tr>
     </table>
 
-    <!-- Tabel data per ekspedisi -->
+    <!-- ================= TABEL RINCIAN ================= -->
+    <h4>Rincian Pengiriman per Cabang &amp; Ekspedisi</h4>
     <table class="data-table">
         <thead>
         <tr>
+            <th>Cabang (Kota)</th>
             <th>Ekspedisi</th>
-            <th class="text-end">Jumlah Kiriman</th>
+            <th class="text-end">Total Paket</th>
             <th class="text-end">Total Berat (kg)</th>
             <th class="text-end">Total Biaya (Rp)</th>
-            <th class="text-end">Rata‑rata per Kiriman (Rp)</th>
         </tr>
         </thead>
         <tbody>
-        @forelse($reportData as $row)
-            <tr>
-                <td>{{ $row->expedition }}</td>
-                <td class="text-end">{{ number_format($row->total_shipments) }}</td>
-                <td class="text-end">{{ number_format($row->total_weight, 2) }}</td>
-                <td class="text-end">Rp {{ number_format($row->total_cost, 0, ',', '.') }}</td>
-                <td class="text-end">Rp {{ number_format($row->avg_cost_per_shipment, 0, ',', '.') }}</td>
-            </tr>
+        @forelse($detailStats as $row)
+        <tr>
+            <td>{{ $row->receiver_city }}</td>
+            <td>{{ $row->expedition }}</td>
+            <td class="text-end">{{ number_format($row->total_paket) }}</td>
+            <td class="text-end">{{ number_format($row->total_berat, 2) }}</td>
+            <td class="text-end">Rp {{ number_format($row->total_biaya, 0, ',', '.') }}</td>
+        </tr>
         @empty
-            <tr>
-                <td colspan="5" class="text-center">Belum ada data untuk periode yang dipilih.</td>
-            </tr>
+        <tr>
+            <td colspan="5" class="text-center">Tidak ada data untuk filter yang dipilih.</td>
+        </tr>
         @endforelse
         </tbody>
     </table>
 
+    <!-- ================= FOOTER ================= -->
     <div class="footer">
-        Dicetak pada: {{ now()->format('d/m/Y H:i:s') }} | Sistem Manajemen Pengiriman Barang - PT Pelita Indonesia Djaya
+        Dicetak: {{ now()->format('d/m/Y H:i:s') }} |
+        Sistem Manajemen Pengiriman Barang - PT Pelita Indonesia Djaya
     </div>
 </div>
 </body>

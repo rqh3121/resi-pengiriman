@@ -5,17 +5,38 @@
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="display-5 fw-bold">Daftar Pengiriman</h1>
-    <a href="{{ route('shipments.create') }}" class="btn btn-primary btn-modern">
-        <i class="fas fa-plus-circle me-2"></i> Tambah Baru
-    </a>
+    <a href="{{ route('shipments.create') }}" class="btn btn-primary btn-modern"><i class="fas fa-plus-circle me-2"></i> Tambah Baru</a>
 </div>
 
-<!-- Search -->
+<!-- Filter Proyek -->
+<form method="GET" class="mb-4">
+    <div class="row g-3">
+        <div class="col-md-4">
+            <label class="form-label">Filter Proyek</label>
+            <select name="project_id" class="form-select">
+                <option value="">Semua Proyek</option>
+                @foreach(\App\Models\Project::orderBy('judul_proyek')->get() as $proj)
+                    <option value="{{ $proj->id }}" {{ request('project_id') == $proj->id ? 'selected' : '' }}>{{ $proj->judul_proyek }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-md-2 align-self-end">
+            <button type="submit" class="btn btn-primary w-100">Filter</button>
+        </div>
+        @if(request('project_id'))
+            <div class="col-md-2 align-self-end">
+                <a href="{{ route('shipments.index') }}" class="btn btn-secondary w-100">Reset</a>
+            </div>
+        @endif
+    </div>
+</form>
+
+<!-- Search form -->
 <form method="GET" class="mb-4">
     <div class="input-group shadow-sm rounded-4 overflow-hidden">
         <input type="text" name="search" class="form-control border-0 py-2" placeholder="Cari pengirim, penerima, atau kota..." value="{{ request('search') }}">
         <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i></button>
-        @if(request('search')) <a href="{{ route('shipments.index') }}" class="btn btn-secondary">Reset</a> @endif
+        @if(request('search')) <a href="{{ route('shipments.index', request('project_id') ? ['project_id' => request('project_id')] : []) }}" class="btn btn-secondary">Reset</a> @endif
     </div>
 </form>
 
@@ -28,6 +49,7 @@
                 <thead class="bg-light">
                     <tr>
                         <th>No</th>
+                        <th>Proyek</th>
                         <th>Pengirim</th>
                         <th>Penerima</th>
                         <th>Kota Tujuan</th>
@@ -41,6 +63,7 @@
                     @foreach ($shipments as $index => $s)
                     <tr>
                         <td class="fw-bold">{{ $index + 1 }}</td>
+                        <td>{{ $s->project->judul_proyek ?? '-' }}</td>
                         <td><strong>{{ $s->sender_name }}</strong><br><small class="text-muted">{{ $s->sender_contact }}</small></td>
                         <td><strong>{{ $s->receiver_name }}</strong><br><small class="text-muted">{{ $s->receiver_contact }}</small></td>
                         <td>{{ $s->receiver_city }}</td>
@@ -63,7 +86,7 @@
                             <div class="d-flex gap-2 justify-content-center">
                                 <a href="{{ route('shipments.show', $s) }}" class="btn btn-sm btn-info rounded-circle"><i class="fas fa-eye"></i></a>
                                 <a href="{{ route('shipments.edit', $s) }}" class="btn btn-sm btn-warning rounded-circle"><i class="fas fa-edit"></i></a>
-                                <form method="POST" action="{{ route('shipments.destroy', $s) }}" class="d-inline">
+                                <form action="{{ route('shipments.destroy', $s) }}" method="POST" class="d-inline">
                                     @csrf @method('DELETE')
                                     <button class="btn btn-sm btn-danger rounded-circle" onclick="return confirm('Hapus?')"><i class="fas fa-trash"></i></button>
                                 </form>
@@ -82,7 +105,7 @@
     </div>
 @endif
 
-<!-- Modal Resi (sama seperti sebelumnya) -->
+<!-- MODAL RESI (sama seperti sebelumnya) -->
 <div class="modal fade" id="resiModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content rounded-4 border-0 shadow-lg">
@@ -98,36 +121,20 @@
                     <div class="mb-3"><label>Ekspedisi</label>
                         <select name="expedition" id="expedition" class="form-select">
                             <option value="">Pilih</option>
-                            <option value="JNE">JNE</option>
-                            <option value="Pos Indonesia">Pos Indonesia</option>
-                            <option value="J&T">J&T</option>
-                            <option value="SiCepat">SiCepat</option>
-                            <option value="AnterAja">AnterAja</option>
-                            <option value="TIKI">TIKI</option>
-                            <option value="Wahana">Wahana</option>
-                            <option value="Lion Parcel">Lion Parcel</option>
-                            <option value="SAPX">SAPX</option>
-                            <option value="SPX">SPX</option>
-                            <option value="GoSend">GoSend</option>
-                            <option value="GrabExpress">GrabExpress</option>
-                            <option value="Ninja Xpress">Ninja Xpress</option>
-                            <option value="ID Express">ID Express</option>
-                            <option value="DHL">DHL</option>
-                            <option value="FedEx">FedEx</option>
-                            <option value="Didi Express">Didi Express</option>
-                            <option value="RajaKirim">RajaKirim</option>
-                            <option value="Sentral Cargo">Sentral Cargo</option>
-                            <option value="Lalamove">Lalamove</option>
+                            <option value="JNE">JNE</option><option value="Pos Indonesia">Pos Indonesia</option>
+                            <option value="J&T">J&T</option><option value="SiCepat">SiCepat</option>
+                            <option value="AnterAja">AnterAja</option><option value="TIKI">TIKI</option>
+                            <option value="Wahana">Wahana</option><option value="Lion Parcel">Lion Parcel</option>
+                            <option value="SAPX">SAPX</option><option value="SPX">SPX</option>
+                            <option value="GoSend">GoSend</option><option value="GrabExpress">GrabExpress</option>
+                            <option value="Ninja Xpress">Ninja Xpress</option><option value="ID Express">ID Express</option>
+                            <option value="DHL">DHL</option><option value="FedEx">FedEx</option>
+                            <option value="Didi Express">Didi Express</option><option value="RajaKirim">RajaKirim</option>
+                            <option value="Sentral Cargo">Sentral Cargo</option><option value="Lalamove">Lalamove</option>
                         </select>
                     </div>
-                    <div class="mb-3">
-                        <label for="weight" class="form-label">Berat (kg)</label>
-                        <input type="number" step="0.01" class="form-control" id="weight" name="weight">
-                    </div>
-                    <div class="mb-3">
-                        <label for="shipping_cost" class="form-label">Biaya Pengiriman (Rp)</label>
-                        <input type="number" step="1000" class="form-control" id="shipping_cost" name="shipping_cost">
-                    </div>
+                    <div class="mb-3"><label>Berat (kg)</label><input type="number" step="0.01" class="form-control" name="weight" id="weight"></div>
+                    <div class="mb-3"><label>Biaya Pengiriman (Rp)</label><input type="number" step="1000" class="form-control" name="shipping_cost" id="shipping_cost"></div>
                     <div class="mb-3"><label>Foto Resi</label><input type="file" name="resi_photo" class="form-control" accept="image/*"></div>
                     <div id="currentPhoto" class="d-none"><a href="#" target="_blank" id="photoLink">Lihat foto</a></div>
                 </div>

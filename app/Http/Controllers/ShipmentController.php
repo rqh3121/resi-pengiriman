@@ -7,46 +7,42 @@ use App\Models\Branch;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
-use App\Models\SenderAddress; // tambahkan ini
+use App\Models\SenderAddress;
+use App\Models\Project;
 
 class ShipmentController extends Controller
 {
     public function index(Request $request)
     {
-        $search = $request->input('search');
-        $shipments = Shipment::query();
-
-        if ($search) {
-            $shipments->where(function ($q) use ($search) {
-                $q->where('sender_name', 'LIKE', "%{$search}%")
-                  ->orWhere('receiver_name', 'LIKE', "%{$search}%")
-                  ->orWhere('receiver_city', 'LIKE', "%{$search}%");
-            });
+        $project_id = $request->input('project_id');
+        $query = Shipment::with('project');
+        if ($project_id) {
+            $query->where('project_id', $project_id);
         }
-
-        $shipments = $shipments->latest()->get();
-        return view('shipments.index', compact('shipments', 'search'));
+        $shipments = $query->latest()->get();
+        return view('shipments.index', compact('shipments', 'project_id'));
     }
 
     public function create()
     {
+        $projects = Project::orderBy('judul_proyek')->get();
         $branches = Branch::orderBy('city')->get();
         $senderAddresses = SenderAddress::all(); // ambil semua alamat pengirim
-        return view('shipments.create', compact('branches', 'senderAddresses'));
+        return view('shipments.create', compact('projects', 'branches', 'senderAddresses'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'sender_name'     => 'required',
-            'sender_contact'  => 'required',
-            'sender_address'  => 'required',
-            'receiver_name'   => 'required',
-            'receiver_contact'=> 'required',
-            'receiver_address'=> 'required',
-            'receiver_city'   => 'required',
-            'package_count'   => 'required|integer|min:1',
-            'item_description'=> 'nullable|string',
+            'sender_name' => 'required',
+            'sender_contact' => 'required',
+            'sender_address' => 'required',
+            'receiver_name' => 'required',
+            'receiver_contact' => 'required',
+            'receiver_address' => 'required',
+            'receiver_city' => 'required',
+            'package_count' => 'required|integer|min:1',
+            'project_id' => 'required|exists:projects,id',   // tambahan
         ]);
 
         Shipment::create($request->all());
@@ -60,23 +56,24 @@ class ShipmentController extends Controller
 
     public function edit(Shipment $shipment)
     {
+        $projects = Project::orderBy('judul_proyek')->get();
         $branches = Branch::orderBy('city')->get();
         $senderAddresses = SenderAddress::all();
-        return view('shipments.edit', compact('shipment', 'branches', 'senderAddresses'));
+        return view('shipments.edit', compact('shipment', 'projects', 'branches', 'senderAddresses'));
     }
 
     public function update(Request $request, Shipment $shipment)
     {
         $request->validate([
-            'sender_name'     => 'required',
-            'sender_contact'  => 'required',
-            'sender_address'  => 'required',
-            'receiver_name'   => 'required',
-            'receiver_contact'=> 'required',
-            'receiver_address'=> 'required',
-            'receiver_city'   => 'required',
-            'package_count'   => 'required|integer|min:1',
-            'item_description'=> 'nullable|string',
+            'sender_name' => 'required',
+            'sender_contact' => 'required',
+            'sender_address' => 'required',
+            'receiver_name' => 'required',
+            'receiver_contact' => 'required',
+            'receiver_address' => 'required',
+            'receiver_city' => 'required',
+            'package_count' => 'required|integer|min:1',
+            'project_id' => 'required|exists:projects,id',   // tambahan
         ]);
 
         $shipment->update($request->all());
